@@ -93,7 +93,7 @@ RUN apt-get update && \
 # X11
   xvfb x11vnc \
 # WM
-  fluxbox xterm \
+  blackbox xterm \
 # debug utilities
   busybox figlet file strace less && \
 # ...

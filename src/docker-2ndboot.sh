@@ -13,6 +13,7 @@ set -eux
 
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
+blackbox &
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
 
@@ -28,7 +29,6 @@ else
     x11vnc -display 0 -nopw -noncache -rfbportv6 -1 -q -forever -bg
 fi
 
-fluxbox &
 if ! systemctl is-system-running --wait; then
     systemctl status --no-pager -l anbox-container-manager
     journalctl -u anbox-container-manager --no-pager -l
