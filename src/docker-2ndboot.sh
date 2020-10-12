@@ -11,20 +11,22 @@ trap finish EXIT
 cd $(realpath $(dirname $0)/..)
 set -eux
 
-mkdir -p ~/.vnc
-if [ ! -e ~/.vnc/passwdfile ]; then
-    set +x
-    echo $(head /dev/urandom | tr -dc a-z0-9 | head -c 32) > ~/.vnc/passwdfile
-    set -x
-fi
-
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
-: FIXME: remove this sleep
-sleep 1
-x11vnc -usepw -noncache -rfbportv6 -1 -q -forever -bg
+
+if [ -z "$NO_VNC_PASS" ]; then
+    mkdir -p ~/.vnc
+    if [ ! -e ~/.vnc/passwdfile ]; then
+        set +x
+        echo $(head /dev/urandom | tr -dc a-z0-9 | head -c 32) > ~/.vnc/passwdfile
+        set -x
+    fi
+    x11vnc -display 0 -usepw -noncache -rfbportv6 -1 -q -forever -bg
+else
+    x11vnc -display 0 -nopw -noncache -rfbportv6 -1 -q -forever -bg
+fi
 
 fluxbox &
 if ! systemctl is-system-running --wait; then
@@ -41,15 +43,12 @@ anbox launch --package=org.anbox.appmgr --component=org.anbox.appmgr.AppViewActi
 
 adb wait-for-device
 
-# install apk (pre-installed apps such as F-Droid)
-for f in /apk-pre.d/*.apk; do adb install $f; done
-
-# install apk
-if ls /apk.d/*.apk; then
-    for f in /apk.d/*.apk; do adb install $f; done
-fi
+# install APKs
+for f in {/apk-pre.d/,/apk.d/}*.apk; do adb install -r $f; done
 
 # done
 figlet "Ready"
-echo "Hint: the password is stored in $HOME/.vnc/passwdfile"
+if [ -z "$NO_VNC_PASS" ]; then
+    echo "Hint: the password is stored in $HOME/.vnc/passwdfile"
+fi
 exec sleep infinity
