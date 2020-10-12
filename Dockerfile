@@ -8,9 +8,11 @@ ARG ANBOX_COMMIT=170f1e029e753e782c66bffb05e91dd770d47dc3
 
 # ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/07/19/android_amd64.img
 # Mirror
-ARG ANDROID_IMAGE=https://github.com/AkihiroSuda/anbox-android-images-mirror/releases/download/snapshot-20180719/android_amd64.img
+#ARG ANDROID_IMAGE=https://github.com/AkihiroSuda/anbox-android-images-mirror/releases/download/snapshot-20180719/android_amd64.img
 # https://build.anbox.io/android-images/2018/07/19/android_amd64.img.sha256sum
-ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a03830381896a8cca
+#ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a03830381896a8cca
+ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/06/12/android_amd64.img
+ARG ANDROID_IMAGE_SHA256=5c4b8f7caeaf604770e37a29b65c7711b26d009a548b4fac8dfb77585e56dc73
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
@@ -91,27 +93,27 @@ RUN apt-get update && \
 # X11
   xvfb x11vnc \
 # WM
-  fvwm xterm \
+  fluxbox xterm \
 # debug utilities
   busybox figlet file strace less && \
 # ...
   useradd --create-home --home-dir /home/user --uid 1000 -G systemd-journal user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
-  chmod +x /docker-entrypoint.sh
+  chmod +x /docker-entrypoint.sh && \
 # apk-pre.d is for pre-installed apks, /apk.d for the mountpoint for user-specific apks
-RUN mkdir -p /apk-pre.d /apk.d && \
+  mkdir -p /apk-pre.d /apk.d && \
   curl -L -o /apk-pre.d/FDroid.apk https://f-droid.org/FDroid.apk && \
   curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.0.0-beta.4/fenix-82.0.0-beta.4-x86_64.apk && \
   curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
-  chmod 444 /apk-pre.d/*
+  chmod 444 /apk-pre.d/* && \
+  rm -rf /var/lib/apt/lists/*
 COPY --from=android-img /android.img /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox
 COPY --from=anbox /anbox/scripts/anbox-bridge.sh /usr/local/share/anbox/anbox-bridge.sh
 COPY --from=anbox /anbox/data/ui /usr/local/share/anbox/ui
-RUN ldconfig
 ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pre.sh
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
-RUN systemctl enable anbox-container-manager
+RUN ldconfig && systemctl enable anbox-container-manager
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 ADD swiftshader/* /usr/local/lib/
