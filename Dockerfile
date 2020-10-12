@@ -98,9 +98,9 @@ RUN apt-get update && \
   useradd --create-home --home-dir /home/user --uid 1000 -G systemd-journal user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
   chmod +x /docker-entrypoint.sh && \
-# apk-pre.d is for pre-installed apks, /apk.d for the mountpoint for user-specific apks
-  mkdir -p /apk-pre.d /apk.d && \
-  curl -L -o /apk-pre.d/FDroid.apk https://f-droid.org/FDroid.apk && \
+# apk-pre.d is for pre-installed apks
+  mkdir -p /apk-pre.d && \
+# install FF + ungoogled-chromium-android
   curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.0.0-beta.4/fenix-82.0.0-beta.4-x86_64.apk && \
   curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
   chmod 444 /apk-pre.d/* && \

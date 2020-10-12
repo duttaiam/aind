@@ -9,7 +9,7 @@ function finish {
 trap finish EXIT
 
 cd $(realpath $(dirname $0)/..)
-set -ex
+set -eux
 
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
@@ -17,17 +17,7 @@ export DISPLAY=:0
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
 blackbox &
 
-if [ -z "$NO_VNC_PASS" ]; then
-    mkdir -p ~/.vnc
-    if [ ! -e ~/.vnc/passwdfile ]; then
-        set +x
-        echo $(head /dev/urandom | tr -dc a-z0-9 | head -c 32) > ~/.vnc/passwdfile
-        set -x
-    fi
-    x11vnc -usepw -noncache -rfbportv6 -1 -q -forever -bg
-else
-    x11vnc -nopw -noncache -rfbportv6 -1 -q -forever -bg
-fi
+x11vnc -nopw -noncache -rfbportv6 -1 -q -forever -bg
 
 if ! systemctl is-system-running --wait; then
     systemctl status --no-pager -l anbox-container-manager
@@ -44,11 +34,8 @@ anbox launch --package=org.anbox.appmgr --component=org.anbox.appmgr.AppViewActi
 adb wait-for-device
 
 # install APKs
-for f in {/apk-pre.d/,/apk.d/}*.apk; do adb install -r $f; done
+for f in /apk-pre.d/*.apk; do adb install -r $f; done
 
 # done
 figlet "Ready"
-if [ -z "$NO_VNC_PASS" ]; then
-    echo "Hint: the password is stored in $HOME/.vnc/passwdfile"
-fi
 exec sleep infinity
