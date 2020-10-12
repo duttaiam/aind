@@ -120,6 +120,7 @@ ADD hack/install-kmod.sh /
 VOLUME /var/lib/anbox
 ENTRYPOINT ["/docker-entrypoint.sh", "unsudo"]
 EXPOSE 5900
+EXPOSE 5037
 HEALTHCHECK --interval=15s --timeout=10s --start-period=60s --retries=5 \
   CMD ["pgrep", "-f", "org.anbox.appmgr"]
 CMD ["/home/user/docker-2ndboot.sh"]

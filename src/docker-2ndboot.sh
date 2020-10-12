@@ -11,6 +11,8 @@ trap finish EXIT
 cd $(realpath $(dirname $0)/..)
 set -eux
 
+adb -a nodaemon server & # launch adb server listening on all interfaces so we can forward the port
+
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
 
