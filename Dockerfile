@@ -105,10 +105,12 @@ RUN apt-get update && \
   curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
   chmod 444 /apk-pre.d/* && \
   rm -rf /var/lib/apt/lists/*
+VOLUME /var/lib/anbox
 COPY --from=android-img /android.img /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox
 COPY --from=anbox /anbox/scripts/anbox-bridge.sh /usr/local/share/anbox/anbox-bridge.sh
 COPY --from=anbox /anbox/data/ui /usr/local/share/anbox/ui
+COPY --from=anbox /anbox/android/media/* /var/lib/anbox/rootfs-overlay/system/etc/
 ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pre.sh
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
 RUN ldconfig && systemctl enable anbox-container-manager
@@ -117,7 +119,6 @@ ADD src/docker-2ndboot.sh  /home/user
 ADD swiftshader/* /usr/local/lib/
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
-VOLUME /var/lib/anbox
 ENTRYPOINT ["/docker-entrypoint.sh", "unsudo"]
 EXPOSE 5900
 EXPOSE 5037
