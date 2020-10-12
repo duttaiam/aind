@@ -13,9 +13,9 @@ set -ex
 
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
-blackbox &
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
+blackbox &
 
 if [ -z "$NO_VNC_PASS" ]; then
     mkdir -p ~/.vnc
@@ -24,9 +24,9 @@ if [ -z "$NO_VNC_PASS" ]; then
         echo $(head /dev/urandom | tr -dc a-z0-9 | head -c 32) > ~/.vnc/passwdfile
         set -x
     fi
-    x11vnc -display 0 -usepw -noncache -rfbportv6 -1 -q -forever -bg
+    x11vnc -usepw -noncache -rfbportv6 -1 -q -forever -bg
 else
-    x11vnc -display 0 -nopw -noncache -rfbportv6 -1 -q -forever -bg
+    x11vnc -nopw -noncache -rfbportv6 -1 -q -forever -bg
 fi
 
 if ! systemctl is-system-running --wait; then

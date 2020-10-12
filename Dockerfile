@@ -8,11 +8,9 @@ ARG ANBOX_COMMIT=170f1e029e753e782c66bffb05e91dd770d47dc3
 
 # ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/07/19/android_amd64.img
 # Mirror
-#ARG ANDROID_IMAGE=https://github.com/AkihiroSuda/anbox-android-images-mirror/releases/download/snapshot-20180719/android_amd64.img
+ARG ANDROID_IMAGE=https://github.com/AkihiroSuda/anbox-android-images-mirror/releases/download/snapshot-20180719/android_amd64.img
 # https://build.anbox.io/android-images/2018/07/19/android_amd64.img.sha256sum
-#ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a03830381896a8cca
-ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/06/12/android_amd64.img
-ARG ANDROID_IMAGE_SHA256=5c4b8f7caeaf604770e37a29b65c7711b26d009a548b4fac8dfb77585e56dc73
+ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a03830381896a8cca
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
