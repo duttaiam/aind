@@ -18,13 +18,13 @@ if [ ! -e ~/.vnc/passwdfile ]; then
     set -x
 fi
 
-Xvfb &
+Xvfb :0 -screen 0, 1920x1080x24 &
 export DISPLAY=:0
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
 : FIXME: remove this sleep
 sleep 1
-x11vnc -usepw -ncache 10 -forever -bg
+x11vnc -usepw -ncache 10 -rfbportv6 -1 -q -forever -bg
 
 fvwm &
 if ! systemctl is-system-running --wait; then
@@ -34,7 +34,8 @@ if ! systemctl is-system-running --wait; then
 fi
 systemctl status --no-pager -l anbox-container-manager
 
-anbox session-manager &
+export SWIFTSHADER_PATH=/usr/local/lib
+anbox session-manager --software-renderer --experimental &
 until anbox wait-ready; do sleep 1; done
 anbox launch --package=org.anbox.appmgr --component=org.anbox.appmgr.AppViewActivity
 

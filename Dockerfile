@@ -96,12 +96,13 @@ RUN apt-get update && \
   busybox figlet file strace less && \
 # ...
   useradd --create-home --home-dir /home/user --uid 1000 -G systemd-journal user  && \
-  curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/6ced78a9df65c13399ef1ce41c0bedc194d7cff6/docker-entrypoint.sh && \
+  curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
   chmod +x /docker-entrypoint.sh
 # apk-pre.d is for pre-installed apks, /apk.d for the mountpoint for user-specific apks
 RUN mkdir -p /apk-pre.d /apk.d && \
   curl -L -o /apk-pre.d/FDroid.apk https://f-droid.org/FDroid.apk && \
-  curl -L -o /apk-pre.d/firefox.apk https://ftp.mozilla.org/pub/mobile/releases/68.9.0/android-x86_64/en-US/fennec-68.9.0.en-US.android-x86_64.apk && \
+  curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.0.0-beta.4/fenix-82.0.0-beta.4-x86_64.apk && \
+  curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
   chmod 444 /apk-pre.d/*
 COPY --from=android-img /android.img /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox
@@ -113,6 +114,7 @@ ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-mana
 RUN systemctl enable anbox-container-manager
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
+ADD swiftshader/* /usr/local/lib
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
 VOLUME /var/lib/anbox
