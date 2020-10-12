@@ -9,7 +9,7 @@ function finish {
 trap finish EXIT
 
 cd $(realpath $(dirname $0)/..)
-set -eux
+set -ex
 
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
