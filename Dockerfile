@@ -95,7 +95,7 @@ RUN apt-get update && \
 # debug utilities
   busybox figlet file strace less && \
 # ...
-  useradd --create-home --home-dir /home/user --uid 1000 -G systemd-journal user  && \
+  useradd --create-home --home-dir /home/user --uid 1000 -G systemd-journal -G audio user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
   chmod +x /docker-entrypoint.sh && \
 # apk-pre.d is for pre-installed apks
