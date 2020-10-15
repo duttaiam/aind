@@ -16,6 +16,7 @@ FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
+  apt-get upgrade -y && \
   apt-get install -qq -y --no-install-recommends \
   build-essential \
   ca-certificates \
@@ -77,6 +78,7 @@ FROM ${BASE}
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
+  apt-get upgrade -y && \
   apt-get install -qq -y --no-install-recommends \
 # base system
   ca-certificates curl iproute2 jq kmod socat \
