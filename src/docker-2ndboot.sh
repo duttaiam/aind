@@ -28,8 +28,7 @@ if ! systemctl is-system-running --wait; then
 fi
 systemctl status --no-pager -l anbox-container-manager
 
-export SWIFTSHADER_PATH=/usr/local/lib
-anbox session-manager --software-renderer --experimental --window-size=1024,768 &
+anbox session-manager --experimental --window-size=1024,768 &
 until anbox wait-ready; do sleep 1; done
 anbox launch --package=org.anbox.appmgr --component=org.anbox.appmgr.AppViewActivity
 
