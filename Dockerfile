@@ -120,8 +120,9 @@ ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-mana
 RUN ldconfig && systemctl enable anbox-container-manager
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
-ADD swiftshader/* /usr/local/lib/
-RUN ldconfig
+# Either copy SwiftShader libs below, or install: libegl1-mesa libgles2-mesa
+ADD swiftshader/libEGL.so /usr/lib/x86_64-linux-gnu/libEGL.so.1
+ADD swiftshader/libGLESv2.so /usr/lib/x86_64-linux-gnu/libGLESv2.so.2
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
 ENTRYPOINT ["/docker-entrypoint.sh", "unsudo"]
