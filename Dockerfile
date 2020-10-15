@@ -14,7 +14,7 @@ ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a0383038
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "deb [trusted=yes allow-downgrade-to-insecure=yes allow-insecure=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
+RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get install -qq -y --no-install-recommends \
   build-essential \
@@ -75,7 +75,7 @@ RUN curl --retry 10 -L -o /android.img $ANDROID_IMAGE \
 
 FROM ${BASE}
 ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "deb [trusted=yes allow-downgrade-to-insecure=yes allow-insecure=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
+RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get install -qq -y --no-install-recommends \
 # base system
@@ -120,7 +120,8 @@ ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 ADD swiftshader/* /usr/local/lib/
 ENV SWIFTSHADER_PATH=/usr/local/lib
-ENV ANBOX_FORCE_SOFTWARE_RENDERING=true
+# The below doesn't seem to work
+ENV ANBOX_FORCE_SOFTWARE_RENDERING=false
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
 ENTRYPOINT ["/docker-entrypoint.sh", "unsudo"]
