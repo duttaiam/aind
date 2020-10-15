@@ -85,7 +85,7 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
 # lxc
   iptables lxc \
 # anbox deps
-  libboost-log1.71.0  libboost-thread1.71.0 libboost-program-options1.71.0 libboost-iostreams1.71.0 libboost-filesystem1.71.0 libegl1-mesa libgles2-mesa libprotobuf-lite17 libsdl2-2.0-0 libsdl2-image-2.0-0 \
+  libboost-log1.71.0  libboost-thread1.71.0 libboost-program-options1.71.0 libboost-iostreams1.71.0 libboost-filesystem1.71.0 libprotobuf-lite17 libsdl2-2.0-0 libsdl2-image-2.0-0 \
 # squashfuse
   squashfuse fuse3 \
 # adb
@@ -121,6 +121,7 @@ RUN ldconfig && systemctl enable anbox-container-manager
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 ADD swiftshader/* /usr/local/lib/
+RUN ldconfig
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
 ENTRYPOINT ["/docker-entrypoint.sh", "unsudo"]

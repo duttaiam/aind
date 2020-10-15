@@ -16,8 +16,6 @@ adb -a nodaemon server & # launch adb server listening on all interfaces so we c
 Xvfb :0 -screen 0, 1024x768x24 &
 export DISPLAY=:0
 export EGL_PLATFORM=x11 # workaround, see https://github.com/anbox/anbox/issues/1634
-export SWIFTSHADER_PATH=/usr/local/lib
-export ANBOX_FORCE_SOFTWARE_RENDERING=false # Swiftshader is not (yet) working, so disable this
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
 blackbox &
