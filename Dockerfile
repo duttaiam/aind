@@ -119,8 +119,9 @@ RUN ldconfig && systemctl enable anbox-container-manager
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 ADD swiftshader/* /usr/local/lib/
+ENV EGL_PLATFORM=x11
+# Swiftshader is (not) yet working, so disable this
 ENV SWIFTSHADER_PATH=/usr/local/lib
-# The below doesn't seem to work
 ENV ANBOX_FORCE_SOFTWARE_RENDERING=false
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
