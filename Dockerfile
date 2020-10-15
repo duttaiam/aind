@@ -75,7 +75,8 @@ RUN curl --retry 10 -L -o /android.img $ANDROID_IMAGE \
 
 FROM ${BASE}
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
+RUN echo "deb [trusted=yes allow-downgrade-to-insecure=yes allow-insecure=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
+  apt-get update && \
   apt-get install -qq -y --no-install-recommends \
 # base system
   ca-certificates curl iproute2 jq kmod socat \
