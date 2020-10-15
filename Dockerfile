@@ -14,7 +14,7 @@ ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a0383038
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "deb [allow-insecure=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
+RUN echo "deb [trusted=yes allow-downgrade-to-insecure=yes allow-insecure=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get install -qq -y --no-install-recommends \
   build-essential \
