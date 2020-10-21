@@ -107,6 +107,7 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
 # install FF + ungoogled-chromium-android
   curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.0.0-beta.4/fenix-82.0.0-beta.4-x86_64.apk && \
   #curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
+# Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
   curl -L -o /apk-pre.d/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
   chmod 444 /apk-pre.d/* && \
   rm -rf /var/lib/apt/lists/*
