@@ -50,7 +50,7 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
   lxc-dev \
   pkg-config \
   protobuf-compiler \
-  python3
+  python3-minimal
 RUN git clone --recursive https://github.com/anbox/anbox /anbox
 WORKDIR /anbox
 ARG ANBOX_COMMIT
@@ -97,7 +97,7 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
 # WM
   blackbox xterm \
 # debug utilities
-  busybox figlet file strace less && \
+  busybox figlet file strace less \
 # MESA libs
   libegl1-mesa libgles2-mesa && \
 # Homedir, entrypoint
