@@ -98,7 +98,9 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
   blackbox xterm \
 # debug utilities
   busybox figlet file strace less && \
-# ...
+# MESA libs
+  libegl1-mesa libgles2-mesa && \
+# Homedir, entrypoint
   useradd --create-home --home-dir /home/user -s /bin/bash --uid 1000 -G systemd-journal,audio,video user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
   chmod +x /docker-entrypoint.sh && \
@@ -124,8 +126,8 @@ RUN ldconfig && systemctl enable anbox-container-manager
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 # Either copy SwiftShader libs below, or install: libegl1-mesa libgles2-mesa
-ADD swiftshader/libEGL.so /usr/lib/x86_64-linux-gnu/libEGL.so.1
-ADD swiftshader/libGLESv2.so /usr/lib/x86_64-linux-gnu/libGLESv2.so.2
+#ADD swiftshader/libEGL.so /usr/lib/x86_64-linux-gnu/libEGL.so.1
+#ADD swiftshader/libGLESv2.so /usr/lib/x86_64-linux-gnu/libGLESv2.so.2
 # Usage: docker run --rm --privileged -v /:/host --entrypoint bash aind/aind -exc "cp -f /install-kmod.sh /host/aind-install-kmod.sh && cd /host && chroot . /aind-install-kmod.sh"
 ADD hack/install-kmod.sh /
 ENTRYPOINT ["/docker-entrypoint.sh", "unsudo"]
