@@ -3,8 +3,8 @@
 
 ARG BASE=ubuntu:20.04
 
-# Sep 26, 2020
-ARG ANBOX_COMMIT=170f1e029e753e782c66bffb05e91dd770d47dc3
+# Oct 26, 2020
+ARG ANBOX_COMMIT=7f1bfaf90de1f808d4ce8f49ef050120c5c8d1ef
 
 # ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/07/19/android_amd64.img
 # Mirror
@@ -50,7 +50,7 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
   lxc-dev \
   pkg-config \
   protobuf-compiler \
-  python2
+  python3
 RUN git clone --recursive https://github.com/anbox/anbox /anbox
 WORKDIR /anbox
 ARG ANBOX_COMMIT
@@ -104,8 +104,9 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
   chmod +x /docker-entrypoint.sh && \
 # apk-pre.d is for pre-installed apks
   mkdir -p /apk-pre.d && \
-# install FF + ungoogled-chromium-android
-  curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.0.0-beta.4/fenix-82.0.0-beta.4-x86_64.apk && \
+# Firefox from: https://github.com/mozilla-mobile/fenix/releases/ (x86_64 apk)
+  curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
+# Chrome from: https://git.droidware.info/wchen342/ungoogled-chromium-android/releases (ChromeModernPublic_x86.apk)
   curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
 # Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
 #  curl -L -o /apk-pre.d/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
