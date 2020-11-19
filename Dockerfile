@@ -3,8 +3,8 @@
 
 ARG BASE=ubuntu:20.04
 
-# Oct 26, 2020
-ARG ANBOX_COMMIT=7f1bfaf90de1f808d4ce8f49ef050120c5c8d1ef
+# Nov 12, 2020
+ARG ANBOX_COMMIT=25e288436c937e7f4da56eac50167a549ac79294
 
 # ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/07/19/android_amd64.img
 # Mirror
@@ -100,6 +100,8 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
   busybox figlet file strace less \
 # MESA libs
   libegl1-mesa libgles2-mesa && \
+# Squash tools
+  lzip squashfs-tools unzip wget && \
 # Homedir, entrypoint
   useradd --create-home --home-dir /home/user -s /bin/bash --uid 1000 -G systemd-journal,audio,video user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
