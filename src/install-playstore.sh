@@ -34,9 +34,6 @@ OPENGAPPS_RELEASEDATE="$(curl -s https://api.github.com/repos/opengapps/x86_64/r
 OPENGAPPS_FILE="open_gapps-x86_64-7.1-pico-$OPENGAPPS_RELEASEDATE.zip"
 OPENGAPPS_URL="https://sourceforge.net/projects/opengapps/files/x86_64/$OPENGAPPS_RELEASEDATE/$OPENGAPPS_FILE"
 
-HOUDINI_Y_URL="http://dl.android-x86.org/houdini/7_y/houdini.sfs"
-HOUDINI_Z_URL="http://dl.android-x86.org/houdini/7_z/houdini.sfs"
-
 ANBOX=$(which anbox)
 OVERLAYDIR="/var/lib/anbox/rootfs-overlay"
 
@@ -78,49 +75,6 @@ cp -r ./$(find opengapps -type d -name "GoogleServicesFramework")			$APPDIR
 cd "$APPDIR"
 chown -R 100000:100000 Phonesky GoogleLoginService GoogleServicesFramework PrebuiltGmsCore
 
-echo "adding lib houdini"
-
-# load houdini_y and spread it
-cd "$WORKDIR"
-if [ ! -f ./houdini_y.sfs ]; then
-  wget -O houdini_y.sfs -q $HOUDINI_Y_URL
-  mkdir -p houdini_y
-  unsquashfs -f -d ./houdini_y ./houdini_y.sfs
-fi
-
-LIBDIR="$OVERLAYDIR/system/lib"
-mkdir -p "$LIBDIR/arm"
-
-cp -r ./houdini_y/* "$LIBDIR/arm"
-chown -R 100000:100000 "$LIBDIR/arm"
-mv "$LIBDIR/arm/libhoudini.so" "$LIBDIR/libhoudini.so"
-
-# load houdini_z and spread it
-
-if [ ! -f ./houdini_z.sfs ]; then
-  wget -O houdini_z.sfs -q $HOUDINI_Z_URL
-  mkdir -p houdini_z
-  unsquashfs -f -d ./houdini_z ./houdini_z.sfs
-fi
-
-LIBDIR64="$OVERLAYDIR/system/lib64"
-mkdir -p "$LIBDIR64"
-
-mkdir -p "$LIBDIR64/arm64"
-cp -r ./houdini_z/* "$LIBDIR64/arm64"
-chown -R 100000:100000 "$LIBDIR64/arm64"
-mv "$LIBDIR64/arm64/libhoudini.so" "$LIBDIR64/libhoudini.so"
-
-# add houdini parser
-BINFMT_DIR="/proc/sys/fs/binfmt_misc/register"
-set +e
-echo ':arm_exe:M::\x7f\x45\x4c\x46\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\x28::/system/lib/arm/houdini:P' | tee -a "$BINFMT_DIR"
-echo ':arm_dyn:M::\x7f\x45\x4c\x46\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\x28::/system/lib/arm/houdini:P' | tee -a "$BINFMT_DIR"
-echo ':arm64_exe:M::\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7::/system/lib64/arm64/houdini64:P' | tee -a "$BINFMT_DIR"
-echo ':arm64_dyn:M::\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x03\x00\xb7::/system/lib64/arm64/houdini64:P' | tee -a "$BINFMT_DIR"
-
-set -e
-
 echo "Modify anbox features"
 # add features
 C=$(cat <<-END
@@ -154,21 +108,10 @@ sed -i "/<\/permissions>/ s/.*/${C}\n&/" "$OVERLAYDIR/system/etc/permissions/anb
 sed -i "/<unavailable-feature name=\"android.hardware.wifi\" \/>/d" "$OVERLAYDIR/system/etc/permissions/anbox.xml"
 sed -i "/<unavailable-feature name=\"android.hardware.bluetooth\" \/>/d" "$OVERLAYDIR/system/etc/permissions/anbox.xml"
 
-if [ ! -x "$OVERLAYDIR/system/build.prop" ]; then
-  cp "$WORKDIR/squashfs-root/system/build.prop" "$OVERLAYDIR/system/build.prop"
-fi
-
-if [ ! -x "$OVERLAYDIR/default.prop" ]; then
-  cp "$WORKDIR/squashfs-root/default.prop" "$OVERLAYDIR/default.prop"
-fi
-
-# set processors
-sed -i "/^ro.product.cpu.abilist=x86_64,x86/ s/$/,armeabi-v7a,armeabi,arm64-v8a/" "$OVERLAYDIR/system/build.prop"
-sed -i "/^ro.product.cpu.abilist32=x86/ s/$/,armeabi-v7a,armeabi/" "$OVERLAYDIR/system/build.prop"
-sed -i "/^ro.product.cpu.abilist64=x86_64/ s/$/,arm64-v8a/" "$OVERLAYDIR/system/build.prop"
-
-echo "persist.sys.nativebridge=1" >> "$OVERLAYDIR/system/build.prop"
-sed -i '/ro.zygote=zygote64_32/a\ro.dalvik.vm.native.bridge=libhoudini.so' "$OVERLAYDIR/default.prop"
+cp "$WORKDIR/squashfs-root/system/build.prop" "$OVERLAYDIR/system/build.prop"
+cp "$WORKDIR/squashfs-root/default.prop" "$OVERLAYDIR/default.prop"
 
 # enable opengles, 131072 = 2 in HEX
 echo "ro.opengles.version=131072" >> "$OVERLAYDIR/system/build.prop"
+
+rm -rf $WORKDIR

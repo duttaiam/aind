@@ -125,6 +125,7 @@ COPY --from=anbox /anbox/android/media/* /var/lib/anbox/rootfs-overlay/system/et
 ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pre.sh
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
 ADD src/install-playstore.sh /root/install-playstore.sh
+# unsquashfs -d /tmp/rootfs-overlay/ /aind-android.img default.prop system/build.prop && cp -R /tmp/rootfs-overlay/* /var/lib/anbox/rootfs-overlay/ && rm -rf /tmp/rootfs-overlay
 RUN ldconfig && systemctl enable anbox-container-manager && /root/install-playstore.sh
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
