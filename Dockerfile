@@ -124,8 +124,8 @@ COPY --from=anbox /anbox/data/ui /usr/local/share/anbox/ui
 COPY --from=anbox /anbox/android/media/* /var/lib/anbox/rootfs-overlay/system/etc/
 ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pre.sh
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
-RUN ldconfig && systemctl enable anbox-container-manager && \
-  curl -s https://raw.githubusercontent.com/codoqwe/anbox-playstore-installer/master/install-playstore.sh | bash -s
+ADD src/install-playstore.sh /root/install-playstore.sh
+RUN ldconfig && systemctl enable anbox-container-manager && /root/install-playstore.sh
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 # Either copy SwiftShader libs below, or install: libegl1-mesa libgles2-mesa
