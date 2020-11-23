@@ -1,10 +1,14 @@
 # this dockerfile can be translated to `docker/dockerfile:1-experimental` syntax for enabling cache mounts:
 # $ ./hack/translate-dockerfile-runopt-directive.sh < Dockerfile | DOCKER_BUILDKIT=1 docker build -f -  .
 
-ARG BASE=ubuntu:20.04
+ARG BASE=ubuntu:rolling
 
-# Nov 12, 2020
-ARG ANBOX_COMMIT=25e288436c937e7f4da56eac50167a549ac79294
+# Nov 19, 2020
+ARG ANBOX_COMMIT=3fa48f9876e1ac5de9b8ae8948c0e5f7300ee436
+
+# From: https://git.droidware.info/wchen342/ungoogled-chromium-android/releases
+# v86.0.4240.111-1 ChromeModernPublic_x86.apk
+ARG UNGOOGLED_HASH=db5a8c23-8c3b-4392-a367-5408262b2831
 
 # ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/07/19/android_amd64.img
 # Mirror
@@ -14,7 +18,8 @@ ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a0383038
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
+RUN \
+  #echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get upgrade -y && \
   apt-get install -qq -y --no-install-recommends \
@@ -62,7 +67,8 @@ RUN git config user.email "nobody@example.com" && \
   if [ -f /patches/*.patch ]; then git am /patches/*.patch && git show --summary; fi
 # runopt = --mount=type=cache,id=aind-anbox,target=/build
 RUN ./scripts/build.sh && \
-  cp -f ./build/src/anbox /anbox-binary
+  cp -f ./build/src/anbox /anbox-binary && \
+  rm -rf ./build
 
 FROM ${BASE} AS android-img
 ENV DEBIAN_FRONTEND=noninteractive
@@ -76,7 +82,9 @@ RUN curl --retry 10 -L -o /android.img $ANDROID_IMAGE \
 
 FROM ${BASE}
 ENV DEBIAN_FRONTEND=noninteractive
-RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
+ARG UNGOOGLED_HASH
+RUN \
+  #echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get upgrade -y && \
   apt-get install -qq -y --no-install-recommends \
@@ -111,7 +119,7 @@ RUN echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu foc
 # Firefox from: https://github.com/mozilla-mobile/fenix/releases/ (x86_64 apk)
   curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
 # Chrome from: https://git.droidware.info/wchen342/ungoogled-chromium-android/releases (ChromeModernPublic_x86.apk)
-  curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/20ebc0c3-d0fd-4ef4-a30a-53f9db7a7643 && \
+  curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
 # Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
 #  curl -L -o /apk-pre.d/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
   chmod 444 /apk-pre.d/* && \
