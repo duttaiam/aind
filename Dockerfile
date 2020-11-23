@@ -12,9 +12,12 @@ ARG UNGOOGLED_HASH=db5a8c23-8c3b-4392-a367-5408262b2831
 
 # ARG ANDROID_IMAGE=https://build.anbox.io/android-images/2018/07/19/android_amd64.img
 # Mirror
-ARG ANDROID_IMAGE=https://github.com/AkihiroSuda/anbox-android-images-mirror/releases/download/snapshot-20180719/android_amd64.img
-# https://build.anbox.io/android-images/2018/07/19/android_amd64.img.sha256sum
-ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a03830381896a8cca
+#ARG ANDROID_IMAGE=https://github.com/AkihiroSuda/anbox-android-images-mirror/releases/download/snapshot-20180719/android_amd64.img
+#ARG ANDROID_IMAGE_SHA256=6b04cd33d157814deaf92dccf8a23da4dc00b05ca6ce982a03830381896a8cca
+
+# New build by https://fjordtek.com/git/Fincer/anbox-install
+ARG ANDROID_IMAGE=https://fjordtek.com/pool/applications/anbox/images/android_7.1.1_r13_patched.img
+ARG ANDROID_IMAGE_SHA256=44bc2e621251d18ab9a44b97c9006794fbad39a377fae60a09f2d320940fcbb2
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
