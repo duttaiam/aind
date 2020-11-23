@@ -18,7 +18,7 @@ export DISPLAY=:0
 export EGL_PLATFORM=x11 # workaround, see https://github.com/anbox/anbox/issues/1634
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
-blackbox &
+openbox &
 
 x11vnc -nopw -noncache -rfbportv6 -1 -q -forever -bg
 
