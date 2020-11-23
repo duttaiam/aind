@@ -116,7 +116,7 @@ cp "$WORKDIR/squashfs-root/default.prop" "$OVERLAYDIR/default.prop"
 echo "ro.opengles.version=131072" >> "$OVERLAYDIR/system/build.prop" # GLES 2.0
 #echo "ro.opengles.version=65536" >> "$OVERLAYDIR/system/build.prop" # GLES 1.1
 
-echo "ro.kernel.qemu.gles=0" >> "$OVERLAYDIR/system/build.prop"
-echo "qemu.gles=0" >> "$OVERLAYDIR/system/build.prop"
+#echo "ro.kernel.qemu.gles=0" >> "$OVERLAYDIR/system/build.prop"
+#echo "qemu.gles=0" >> "$OVERLAYDIR/system/build.prop"
 
 rm -rf $WORKDIR
