@@ -19,6 +19,10 @@ ARG UNGOOGLED_HASH=db5a8c23-8c3b-4392-a367-5408262b2831
 ARG ANDROID_IMAGE=https://fjordtek.com/pool/applications/anbox/images/android_7.1.1_r13_patched.img
 ARG ANDROID_IMAGE_SHA256=44bc2e621251d18ab9a44b97c9006794fbad39a377fae60a09f2d320940fcbb2
 
+ARG ANDROID_IMAGE=http://anbox.postmarketos.org/android-7.1.2_r39-anbox_x86_64-userdebug.img
+ARG ANDROID_IMAGE_SHA256=f5fe1d520bbf132eae7c48d7d6250d20b5f3f753969076254f210baaca8f759b
+
+
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
 RUN \
@@ -67,7 +71,7 @@ COPY ./src/patches/anbox /patches
 # `git am` requires user info to be set
 RUN git config user.email "nobody@example.com" && \
   git config user.name "AinD Build Script" && \
-  if [ -f /patches/*.patch ]; then git am /patches/*.patch && git show --summary; fi
+  git am /patches/*.patch && git show --summary
 # runopt = --mount=type=cache,id=aind-anbox,target=/build
 RUN ./scripts/build.sh && \
   cp -f ./build/src/anbox /anbox-binary && \
