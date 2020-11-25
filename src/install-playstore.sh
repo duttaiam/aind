@@ -67,10 +67,10 @@ cd "$WORKDIR"
 APPDIR="$OVERLAYDIR/system/priv-app"
 mkdir -p "$APPDIR"
 
-cp -r ./$(find opengapps -type d -name "PrebuiltGmsCore")					$APPDIR
-cp -r ./$(find opengapps -type d -name "GoogleLoginService")				$APPDIR
-cp -r ./$(find opengapps -type d -name "Phonesky")						$APPDIR
-cp -r ./$(find opengapps -type d -name "GoogleServicesFramework")			$APPDIR
+cp -r ./$(find opengapps -type d -name "PrebuiltGmsCore") $APPDIR
+cp -r ./$(find opengapps -type d -name "GoogleLoginService") $APPDIR
+cp -r ./$(find opengapps -type d -name "Phonesky") $APPDIR
+cp -r ./$(find opengapps -type d -name "GoogleServicesFramework") $APPDIR
 
 cd "$APPDIR"
 chown -R 100000:100000 Phonesky GoogleLoginService GoogleServicesFramework PrebuiltGmsCore

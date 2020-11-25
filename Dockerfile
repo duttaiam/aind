@@ -129,7 +129,6 @@ RUN \
 #  curl -L -o /apk-pre.d/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
   chmod 444 /apk-pre.d/* && \
   rm -rf /var/lib/apt/lists/*
-VOLUME /var/lib/anbox
 COPY --from=android-img /android.img /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox
 COPY --from=anbox /anbox/scripts/anbox-bridge.sh /usr/local/share/anbox/anbox-bridge.sh
