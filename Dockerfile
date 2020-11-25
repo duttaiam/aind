@@ -120,15 +120,12 @@ RUN \
   useradd --create-home --home-dir /home/user -s /bin/bash --uid 1000 -G systemd-journal,audio,video user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
   chmod +x /docker-entrypoint.sh && \
-# apk-pre.d is for pre-installed apks
-  mkdir -p /apk-pre.d && \
 # Firefox from: https://github.com/mozilla-mobile/fenix/releases/ (x86_64 apk)
-  curl -L -o /apk-pre.d/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
+  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
 # Chrome from: https://git.droidware.info/wchen342/ungoogled-chromium-android/releases (ChromeModernPublic_x86.apk)
-  curl -L -o /apk-pre.d/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
+  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
 # Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
-#  curl -L -o /apk-pre.d/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
-  chmod 444 /apk-pre.d/* && \
+#  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
   rm -rf /var/lib/apt/lists/*
 COPY --from=android-img /android.img /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox

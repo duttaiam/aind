@@ -33,11 +33,6 @@ anbox session-manager --experimental --single-window --window-size=1024,768 &
 until anbox wait-ready; do sleep 1; done
 anbox launch --package=org.anbox.appmgr --component=org.anbox.appmgr.AppViewActivity
 
-adb wait-for-device
-
-# install APKs
-for f in /apk-pre.d/*.apk; do adb install -r $f; done
-
 # done
 figlet "Ready"
 exec sleep infinity
