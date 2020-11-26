@@ -1,8 +1,7 @@
 # this dockerfile can be translated to `docker/dockerfile:1-experimental` syntax for enabling cache mounts:
 # $ ./hack/translate-dockerfile-runopt-directive.sh < Dockerfile | DOCKER_BUILDKIT=1 docker build -f -  .
 
-#ARG BASE=ubuntu:rolling
-ARG BASE=ubuntu:20.04
+ARG BASE=ubuntu:rolling
 
 # Nov 19, 2020
 ARG ANBOX_COMMIT=3fa48f9876e1ac5de9b8ae8948c0e5f7300ee436
@@ -74,7 +73,10 @@ COPY ./src/patches/anbox /patches
 # runopt = --mount=type=cache,id=aind-anbox,target=/build
 RUN ./scripts/build.sh && \
   cp -f ./build/src/anbox /anbox-binary && \
-  rm -rf ./build
+  rm -rf ./build && \
+  apt-get autoclean -y && \
+  apt-get autoremove -y && \
+  rm -rf /var/lib/apt/lists/*
 
 FROM ${BASE} AS android-img
 ENV DEBIAN_FRONTEND=noninteractive
@@ -99,7 +101,7 @@ RUN \
 # lxc
   iptables lxc \
 # anbox deps
-  libboost-log1.71.0  libboost-thread1.71.0 libboost-program-options1.71.0 libboost-iostreams1.71.0 libboost-filesystem1.71.0 libprotobuf-lite17 libsdl2-2.0-0 libsdl2-image-2.0-0 \
+  "libboost-log1*" "libboost-thread1*" "libboost-program-options1*" "libboost-iostreams1*" "libboost-filesystem1*" "libprotobuf-lite*" "libsdl2-*" "libsdl2-image-*" \
 # squashfuse
   squashfuse fuse3 \
 # adb
