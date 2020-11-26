@@ -18,7 +18,6 @@ export DISPLAY=:0
 export EGL_PLATFORM=x11 # workaround, see https://github.com/anbox/anbox/issues/1634
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
-blackbox & # either this or start session manager with --single-mode (broken right now)
 
 x11vnc -nopw -noncache -rfbportv6 -1 -q -forever -bg
 
@@ -29,7 +28,7 @@ if ! systemctl is-system-running --wait; then
 fi
 systemctl status --no-pager -l anbox-container-manager
 
-anbox session-manager --experimental --window-size=1024,768 &
+anbox session-manager --experimental --single-window &
 until anbox wait-ready; do sleep 1; done
 anbox launch --package=org.anbox.appmgr --component=org.anbox.appmgr.AppViewActivity
 

@@ -26,7 +26,6 @@ ARG ANDROID_IMAGE_SHA256=f5fe1d520bbf132eae7c48d7d6250d20b5f3f753969076254f210ba
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
 RUN \
-  #echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get upgrade -y && \
   apt-get install -qq -y --no-install-recommends \
@@ -92,7 +91,6 @@ FROM ${BASE}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG UNGOOGLED_HASH
 RUN \
-  #echo "deb [trusted=yes] http://ppa.launchpad.net/kisak/kisak-mesa/ubuntu focal main" >> /etc/apt/sources.list && \
   apt-get update && \
   apt-get upgrade -y && \
   apt-get install -qq -y --no-install-recommends \
@@ -110,8 +108,6 @@ RUN \
   dbus dbus-user-session systemd systemd-container systemd-sysv \
 # X11
   xvfb x11vnc \
-# WM
-  blackbox xterm \
 # debug utilities
   busybox figlet file strace less \
 # MESA libs
