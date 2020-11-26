@@ -122,11 +122,11 @@ RUN \
   useradd --create-home --home-dir /home/user -s /bin/bash --uid 1000 -G systemd-journal,audio,video user  && \
   curl -L -o /docker-entrypoint.sh https://raw.githubusercontent.com/AkihiroSuda/containerized-systemd/master/docker-entrypoint.sh && \
   chmod +x /docker-entrypoint.sh && \
-  mkdir -p /var/lib/anbox/rootfs-overlay/system/priv-app && \
+  mkdir -p /apks && \
 # Firefox from: https://github.com/mozilla-mobile/fenix/releases/ (x86_64 apk)
-  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
+  curl -L -o /apks/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
 # Chrome from: https://git.droidware.info/wchen342/ungoogled-chromium-android/releases (ChromeModernPublic_x86.apk)
-  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
+  curl -L -o /apks/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
 # Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
 #  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
   apt-get autoclean -y && \
