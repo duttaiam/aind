@@ -129,6 +129,8 @@ RUN \
   curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
 # Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
 #  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
+  apt-get autoclean -y && \
+  apt-get autoremove -y && \
   rm -rf /var/lib/apt/lists/*
 COPY --from=android-img /android.img /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox
@@ -139,7 +141,7 @@ ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pr
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
 ADD src/install-playstore.sh /root/install-playstore.sh
 # unsquashfs -d /tmp/rootfs-overlay/ /aind-android.img default.prop system/build.prop && cp -R /tmp/rootfs-overlay/* /var/lib/anbox/rootfs-overlay/ && rm -rf /tmp/rootfs-overlay
-RUN /root/install-playstore.sh && ldconfig && systemctl enable anbox-container-manager
+RUN /root/install-playstore.sh && ldconfig && systemctl enable anbox-container-manager && chmod 644 /lib/systemd/system/anbox-container-manager.service
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 # Either copy SwiftShader libs below, or install: libegl1-mesa libgles2-mesa
