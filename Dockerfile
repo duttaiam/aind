@@ -122,9 +122,7 @@ RUN \
 # Firefox from: https://github.com/mozilla-mobile/fenix/releases/ (x86_64 apk)
   curl -L -o /apks/firefox.apk https://github.com/mozilla-mobile/fenix/releases/download/v82.1.2/fenix-82.1.2-x86_64.apk && \
 # Chrome from: https://git.droidware.info/wchen342/ungoogled-chromium-android/releases (ChromeModernPublic_x86.apk)
-  curl -L -o /apks/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
-# Chrome from https://github.com/ungoogled-software/ungoogled-chromium-android 
-#  curl -L -o /var/lib/anbox/rootfs-overlay/system/priv-app/chromium.apk "http://server.niekvandermaas.nl/chrome.apk" && \
+#  curl -L -o /apks/chromium.apk https://git.droidware.info/attachments/${UNGOOGLED_HASH} && \
   apt-get autoclean -y && \
   apt-get autoremove -y && \
   rm -rf /var/lib/apt/lists/*
@@ -136,6 +134,7 @@ COPY --from=anbox /anbox/android/media/* /var/lib/anbox/rootfs-overlay/system/et
 ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pre.sh
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
 ADD src/install-playstore.sh /root/install-playstore.sh
+ADD src/chrome-54.apk /apks/chrome-54.apk
 # unsquashfs -d /tmp/rootfs-overlay/ /aind-android.img default.prop system/build.prop && cp -R /tmp/rootfs-overlay/* /var/lib/anbox/rootfs-overlay/ && rm -rf /tmp/rootfs-overlay
 RUN /root/install-playstore.sh && ldconfig && systemctl enable anbox-container-manager && chmod 644 /lib/systemd/system/anbox-container-manager.service
 ADD src/unsudo /usr/local/bin
