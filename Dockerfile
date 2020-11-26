@@ -1,6 +1,3 @@
-# this dockerfile can be translated to `docker/dockerfile:1-experimental` syntax for enabling cache mounts:
-# $ ./hack/translate-dockerfile-runopt-directive.sh < Dockerfile | DOCKER_BUILDKIT=1 docker build -f -  .
-
 ARG BASE=ubuntu:rolling
 
 # Nov 19, 2020
@@ -25,11 +22,7 @@ ARG ANDROID_IMAGE_SHA256=f5fe1d520bbf132eae7c48d7d6250d20b5f3f753969076254f210ba
 
 FROM ${BASE} AS anbox
 ENV DEBIAN_FRONTEND=noninteractive
-RUN \
-  apt-get update && \
-  apt-get upgrade -y && \
-  apt-get install -qq -y --no-install-recommends \
-  build-essential \
+ARG PACKAGES="build-essential \
   ca-certificates \
   cmake \
   cmake-data \
@@ -61,18 +54,20 @@ RUN \
   lxc-dev \
   pkg-config \
   protobuf-compiler \
-  python3-minimal
+  python3-minimal"
+RUN \
+  apt-get update && \
+  apt-get upgrade -y && \
+  apt-get install -qq -y --no-install-recommends ${PACKAGES}
 RUN git clone --recursive https://github.com/anbox/anbox /anbox
 WORKDIR /anbox
-ARG ANBOX_COMMIT
 RUN git pull && git checkout ${ANBOX_COMMIT} && git submodule update --recursive
 COPY ./src/patches/anbox /patches
-# `git am` requires user info to be set
-#RUN git config user.email "nobody@example.com" && git config user.name "AinD Build Script" && git am /patches/*.patch && git show --summary
-# runopt = --mount=type=cache,id=aind-anbox,target=/build
+RUN git config user.email "nobody@example.com" && git config user.name "AinD Build Script" && git am /patches/*.patch && git show --summary
 RUN ./scripts/build.sh && \
   cp -f ./build/src/anbox /anbox-binary && \
   rm -rf ./build && \
+  apt-get purge -y ${PACKAGES} && \
   apt-get autoclean -y && \
   apt-get autoremove -y && \
   rm -rf /var/lib/apt/lists/*
@@ -135,8 +130,15 @@ ADD src/anbox-container-manager-pre.sh /usr/local/bin/anbox-container-manager-pr
 ADD src/anbox-container-manager.service /lib/systemd/system/anbox-container-manager.service
 ADD src/install-playstore.sh /root/install-playstore.sh
 ADD src/chrome-54.apk /apks/chrome-54.apk
-# unsquashfs -d /tmp/rootfs-overlay/ /aind-android.img default.prop system/build.prop && cp -R /tmp/rootfs-overlay/* /var/lib/anbox/rootfs-overlay/ && rm -rf /tmp/rootfs-overlay
-RUN /root/install-playstore.sh && ldconfig && systemctl enable anbox-container-manager && chmod 644 /lib/systemd/system/anbox-container-manager.service
+RUN unsquashfs -d /tmp/rootfs-overlay/ /aind-android.img default.prop system/build.prop && \
+  cp -R /tmp/rootfs-overlay/* /var/lib/anbox/rootfs-overlay/ && \
+  rm -rf /tmp/rootfs-overlay && \
+  echo "ro.debuggable=0" >> /var/lib/anbox/rootfs-overlay/default.prop && \
+  echo "ro.opengles.version=131072" >> /var/lib/anbox/rootfs-overlay/system/build.prop && \
+  echo "ro.product.model=AinD" >> /var/lib/anbox/rootfs-overlay/system/build.prop && \
+  ldconfig && \
+  systemctl enable anbox-container-manager && \
+  chmod 644 /lib/systemd/system/anbox-container-manager.service
 ADD src/unsudo /usr/local/bin
 ADD src/docker-2ndboot.sh  /home/user
 # Either copy SwiftShader libs below, or install: libegl1-mesa libgles2-mesa
