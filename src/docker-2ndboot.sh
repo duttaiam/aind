@@ -18,7 +18,7 @@ export DISPLAY=:0
 export EGL_PLATFORM=x11 # workaround, see https://github.com/anbox/anbox/issues/1634
 
 until [ -e /tmp/.X11-unix/X0 ]; do sleep 1; done
-openbox & # either this or start session manager with --single-mode (broken right now)
+blackbox & # either this or start session manager with --single-mode (broken right now)
 
 x11vnc -nopw -noncache -rfbportv6 -1 -q -forever -bg
 

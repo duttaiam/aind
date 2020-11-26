@@ -111,7 +111,7 @@ RUN \
 # X11
   xvfb x11vnc \
 # WM
-  openbox xterm menu \
+  blackbox xterm \
 # debug utilities
   busybox figlet file strace less \
 # MESA libs
