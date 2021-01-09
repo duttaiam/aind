@@ -18,24 +18,18 @@ ARG UNGOOGLED_HASH=db5a8c23-8c3b-4392-a367-5408262b2831
 #ARG ANDROID_IMAGE_SHA256=44bc2e621251d18ab9a44b97c9006794fbad39a377fae60a09f2d320940fcbb2
 
 # New build by http://anbox.postmarketos.org/
-ARG ANDROID_IMAGE=http://anbox.postmarketos.org/android-7.1.2_r39-anbox_x86_64-userdebug.img
-ARG ANDROID_IMAGE_SHA256=f5fe1d520bbf132eae7c48d7d6250d20b5f3f753969076254f210baaca8f759b
+#ARG ANDROID_IMAGE=http://anbox.postmarketos.org/android-7.1.2_r39-anbox_x86_64-userdebug.img
+#ARG ANDROID_IMAGE_SHA256=f5fe1d520bbf132eae7c48d7d6250d20b5f3f753969076254f210baaca8f759b
+
+# local: cp -f ~/html/android-7.1.2_r39-anbox_x86_64-userdebug.img ~/aind/android.img
+ARG ANDROID_IMAGE=/android.img
 
 FROM ${ANBOX_BASE} AS anbox
-
-FROM ${BASE} AS android-img
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
-  apt-get install -qq -y --no-install-recommends \
-  ca-certificates curl
-ARG ANDROID_IMAGE
-ARG ANDROID_IMAGE_SHA256
-RUN curl --retry 10 -L -o /android.img $ANDROID_IMAGE \
-    && echo $ANDROID_IMAGE_SHA256 /android.img | sha256sum --check
 
 FROM ${BASE}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG UNGOOGLED_HASH
+ARG ANDROID_IMAGE
 RUN \
   apt-get update && \
   apt-get upgrade -y && \
@@ -72,7 +66,8 @@ RUN \
   apt-get autoclean -y && \
   apt-get autoremove -y && \
   rm -rf /var/lib/apt/lists/*
-COPY --from=android-img /android.img /aind-android.img
+#COPY --from=android-img /android.img /aind-android.img
+ADD $ANDROID_IMAGE /aind-android.img
 COPY --from=anbox /anbox-binary /usr/local/bin/anbox
 COPY --from=anbox /anbox/scripts/anbox-bridge.sh /usr/local/share/anbox/anbox-bridge.sh
 COPY --from=anbox /anbox/data/ui /usr/local/share/anbox/ui
