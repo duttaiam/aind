@@ -1,5 +1,4 @@
 ARG BASE=ubuntu:rolling
-ARG ANBOX_BASE=appmekr/anbox:niek_d8aced9
 
 # Nov 19, 2020
 ARG ANBOX_COMMIT=3fa48f9876e1ac5de9b8ae8948c0e5f7300ee436
@@ -21,7 +20,57 @@ ARG UNGOOGLED_HASH=db5a8c23-8c3b-4392-a367-5408262b2831
 ARG ANDROID_IMAGE=http://anbox.postmarketos.org/android-7.1.2_r39-anbox_x86_64-userdebug.img
 ARG ANDROID_IMAGE_SHA256=f5fe1d520bbf132eae7c48d7d6250d20b5f3f753969076254f210baaca8f759b
 
-FROM ${ANBOX_BASE} AS anbox
+FROM ${BASE} AS anbox
+ENV DEBIAN_FRONTEND=noninteractive
+ARG PACKAGES="build-essential \
+  ca-certificates \
+  cmake \
+  cmake-data \
+  cmake-extras \
+  debhelper \
+  dbus \
+  git \
+  google-mock \
+  libboost-dev \
+  libboost-filesystem-dev \
+  libboost-log-dev \
+  libboost-iostreams-dev \
+  libboost-program-options-dev \
+  libboost-system-dev \
+  libboost-test-dev \
+  libboost-thread-dev \
+  libcap-dev \
+  libegl1-mesa-dev \
+  libexpat1-dev \
+  libgles2-mesa-dev \
+  libglm-dev \
+  libgtest-dev \
+  liblxc1 \
+  libproperties-cpp-dev \
+  libprotobuf-dev \
+  libsdl2-dev \
+  libsdl2-image-dev \
+  libsystemd-dev \
+  lxc-dev \
+  pkg-config \
+  protobuf-compiler \
+  python3-minimal"
+RUN \
+  apt-get update && \
+  apt-get upgrade -y && \
+  apt-get install -qq -y --no-install-recommends ${PACKAGES}
+RUN git clone --recursive https://github.com/anbox/anbox /anbox
+WORKDIR /anbox
+RUN git pull && git checkout ${ANBOX_COMMIT} && git submodule update --recursive
+COPY ./src/patches/anbox /patches
+RUN git config user.email "nobody@example.com" && git config user.name "AinD Build Script" && git am /patches/*.patch && git show --summary
+RUN ./scripts/build.sh && \
+  cp -f ./build/src/anbox /anbox-binary && \
+  rm -rf ./build && \
+  apt-get purge -y ${PACKAGES} && \
+  apt-get autoclean -y && \
+  apt-get autoremove -y && \
+  rm -rf /var/lib/apt/lists/*
 
 FROM ${BASE} AS android-img
 ENV DEBIAN_FRONTEND=noninteractive
